@@ -71,10 +71,16 @@ app.MapControllerRoute(
     pattern: "{controller=Home}/{action=Index}/{id?}");
 app.MapRazorPages();
 
-// Inicializar roles e usuário admin
+// Inicializar roles, usuário admin e dados de exemplo
 using (var scope = app.Services.CreateScope())
 {
-    await Contratos2.Services.RoleInitializer.InitializeAsync(scope.ServiceProvider);
+    var services = scope.ServiceProvider;
+    await Contratos2.Services.RoleInitializer.InitializeAsync(services);
+    
+    var context = services.GetRequiredService<ApplicationDbContext>();
+    var userManager = services.GetRequiredService<UserManager<ApplicationUser>>();
+    var roleManager = services.GetRequiredService<RoleManager<IdentityRole>>();
+    await DbInitializer.InitializeAsync(context, userManager, roleManager);
 }
 
 app.Run();
