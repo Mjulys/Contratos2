@@ -1,0 +1,58 @@
+@model Contratos2.Models.Entities.Equipa
+
+@{
+    ViewData["Title"] = "Criar Equipa";
+}
+
+<div class="card">
+    <div class="card-header">
+        <h3><i class="fas fa-shield-alt me-2"></i>Criar Nova Equipa</h3>
+    </div>
+    <div class="card-body">
+        <form asp-action="Create">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <label asp-for="Nome" class="form-label"></label>
+                    <input asp-for="Nome" class="form-control" />
+                    <span asp-validation-for="Nome" class="text-danger"></span>
+                </div>
+                <div class="col-md-6 mb-3">
+                    <label asp-for="Localidade" class="form-label"></label>
+                    <input asp-for="Localidade" class="form-control" />
+                    <span asp-validation-for="Localidade" class="text-danger"></span>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <label asp-for="Estadio" class="form-label"></label>
+                    <input asp-for="Estadio" class="form-control" />
+                    <span asp-validation-for="Estadio" class="text-danger"></span>
+                </div>
+                <div class="col-md-6 mb-3">
+                    <label asp-for="DataFundacao" class="form-label"></label>
+                    <input asp-for="DataFundacao" class="form-control" type="date" />
+                    <span asp-validation-for="DataFundacao" class="text-danger"></span>
+                </div>
+            </div>
+            <div class="mb-3">
+                <label asp-for="Emblema" class="form-label"></label>
+                <input asp-for="Emblema" class="form-control" placeholder="URL do emblema" />
+                <span asp-validation-for="Emblema" class="text-danger"></span>
+            </div>
+            <div class="d-flex justify-content-between">
+                <a asp-action="Index" class="btn btn-secondary">
+                    <i class="fas fa-arrow-left me-2"></i>Voltar
+                </a>
+                <button type="submit" class="btn btn-primary">
+                    <i class="fas fa-save me-2"></i>Criar
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}
+

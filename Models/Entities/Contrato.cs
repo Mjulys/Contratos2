@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace GestaoContratosDesportivos.Models.Entities
+namespace Contratos2.Models.Entities
 {
     public class Contrato
     {

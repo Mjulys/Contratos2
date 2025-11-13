@@ -1,7 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using System.Diagnostics.Contracts;
 
-namespace GestaoContratosDesportivos.Models.Entities
+namespace Contratos2.Models.Entities
 {
     public class Equipa
     {

@@ -1,0 +1,63 @@
+@model IEnumerable<Contratos2.Models.Entities.Contrato>
+
+@{
+    ViewData["Title"] = "Contratos";
+}
+
+<div class="card">
+    <div class="card-header d-flex justify-content-between align-items-center">
+        <h3 class="mb-0"><i class="fas fa-file-contract me-2"></i>Lista de Contratos</h3>
+        @if (User.IsInRole("Admin") || User.IsInRole("Funcionario"))
+        {
+            <a asp-action="Create" class="btn btn-warning">
+                <i class="fas fa-plus me-2"></i>Novo Contrato
+            </a>
+        }
+    </div>
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th>Jogador</th>
+                        <th>Equipa</th>
+                        <th>Data Início</th>
+                        <th>Data Fim</th>
+                        <th>Salário</th>
+                        <th>Ações</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model)
+                    {
+                        <tr>
+                            <td>@item.Jogador?.Nome</td>
+                            <td>@item.Equipa?.Nome</td>
+                            <td>@item.DataInicio.ToString("dd/MM/yyyy")</td>
+                            <td>@item.DataFim.ToString("dd/MM/yyyy")</td>
+                            <td>@(item.Salario?.ToString("C") ?? "-")</td>
+                            <td>
+                                <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-sm btn-info">
+                                    <i class="fas fa-eye"></i>
+                                </a>
+                                @if (User.IsInRole("Admin") || User.IsInRole("Funcionario"))
+                                {
+                                    <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-sm btn-warning">
+                                        <i class="fas fa-edit"></i>
+                                    </a>
+                                }
+                                @if (User.IsInRole("Admin"))
+                                {
+                                    <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-sm btn-danger">
+                                        <i class="fas fa-trash"></i>
+                                    </a>
+                                }
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+

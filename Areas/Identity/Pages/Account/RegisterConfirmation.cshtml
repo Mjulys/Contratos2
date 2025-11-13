@@ -1,0 +1,35 @@
+@page
+@model RegisterConfirmationModel
+@{
+    ViewData["Title"] = "Confirmação de Registo";
+}
+
+<div class="row justify-content-center">
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">
+                <h3 class="mb-0"><i class="fas fa-envelope me-2"></i>@ViewData["Title"]</h3>
+            </div>
+            <div class="card-body">
+                <p>
+                    Por favor, verifique o seu email para confirmar a sua conta.
+                </p>
+                <p>
+                    Email: <strong>@Model.Email</strong>
+                </p>
+                @if (Model.DisplayConfirmAccountLink)
+                {
+                    <p>
+                        <a id="confirm-link" href="@Model.EmailConfirmationUrl" class="btn btn-primary">
+                            <i class="fas fa-check-circle me-2"></i>Confirmar Email
+                        </a>
+                    </p>
+                    <p class="text-muted small">
+                        Nota: Em desenvolvimento, o link acima funciona diretamente. Em produção, verifique o seu email.
+                    </p>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+

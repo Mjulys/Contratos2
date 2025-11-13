@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using System.ComponentModel.DataAnnotations;
 
-namespace GestaoContratosDesportivos.Models.Entities
+namespace Contratos2.Models.Entities
 {
     public class ApplicationUser : IdentityUser
     {
