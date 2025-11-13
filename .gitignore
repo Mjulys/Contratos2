@@ -39,6 +39,12 @@ bld/
 # Mas manter wwwroot/uploads/ no gitignore (já está sendo ignorado)
 wwwroot/uploads/
 
+# Guias de deployment (privados)
+*GUIA*.md
+*DEPLOYMENT*.md
+Guia*.md
+Deployment*.md
+
 # Visual Studio 2017 auto generated files
 Generated\ Files/
 
