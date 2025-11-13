@@ -1,0 +1,71 @@
+@model Contratos2.Models.Entities.Jogador
+@{
+    ViewData["Title"] = "Eliminar Jogador";
+}
+
+<h2 class="text-danger"><i class="fas fa-exclamation-triangle me-2"></i>@ViewData["Title"]</h2>
+<hr />
+
+<div class="alert alert-warning">
+    <strong>Atenção!</strong> Tem a certeza que deseja eliminar este jogador? Esta ação não pode ser desfeita.
+</div>
+
+<div class="row">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header bg-danger text-white">
+                <h4>Informações do Jogador</h4>
+            </div>
+            <div class="card-body">
+                <dl class="row">
+                    <dt class="col-sm-3">Nome:</dt>
+                    <dd class="col-sm-9">@Model.Nome</dd>
+
+                    <dt class="col-sm-3">Email:</dt>
+                    <dd class="col-sm-9">@Model.Email</dd>
+
+                    <dt class="col-sm-3">Data de Nascimento:</dt>
+                    <dd class="col-sm-9">@Model.DataNascimento.ToString("dd/MM/yyyy")</dd>
+
+                    <dt class="col-sm-3">Nacionalidade:</dt>
+                    <dd class="col-sm-9">@(Model.Nacionalidade ?? "-")</dd>
+
+                    <dt class="col-sm-3">Posição:</dt>
+                    <dd class="col-sm-9">@(Model.Posicao ?? "-")</dd>
+
+                    @if (Model.Contratos != null && Model.Contratos.Any())
+                    {
+                        <dt class="col-sm-3">Contratos:</dt>
+                        <dd class="col-sm-9">
+                            <span class="badge bg-warning">@Model.Contratos.Count() contrato(s) associado(s)</span>
+                            <br />
+                            <small class="text-danger">Não é possível eliminar este jogador porque possui contratos associados.</small>
+                        </dd>
+                    }
+                </dl>
+
+                @if (Model.Contratos == null || !Model.Contratos.Any())
+                {
+                    <form asp-action="Delete" method="post" class="mt-4">
+                        <input type="hidden" asp-for="Id" />
+                        <button type="submit" class="btn btn-danger">
+                            <i class="fas fa-trash me-2"></i>Eliminar
+                        </button>
+                        <a asp-action="Index" class="btn btn-secondary">
+                            <i class="fas fa-arrow-left me-2"></i>Cancelar
+                        </a>
+                    </form>
+                }
+                else
+                {
+                    <div class="mt-4">
+                        <a asp-action="Index" class="btn btn-secondary">
+                            <i class="fas fa-arrow-left me-2"></i>Voltar
+                        </a>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+

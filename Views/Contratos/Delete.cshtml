@@ -1,0 +1,56 @@
+@model Contratos2.Models.Entities.Contrato
+@{
+    ViewData["Title"] = "Eliminar Contrato";
+}
+
+<h2 class="text-danger"><i class="fas fa-exclamation-triangle me-2"></i>@ViewData["Title"]</h2>
+<hr />
+
+<div class="alert alert-warning">
+    <strong>Atenção!</strong> Tem a certeza que deseja eliminar este contrato? Esta ação não pode ser desfeita.
+</div>
+
+<div class="row">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header bg-danger text-white">
+                <h4>Informações do Contrato</h4>
+            </div>
+            <div class="card-body">
+                <dl class="row">
+                    <dt class="col-sm-3">Jogador:</dt>
+                    <dd class="col-sm-9">@Model.Jogador?.Nome</dd>
+
+                    <dt class="col-sm-3">Equipa:</dt>
+                    <dd class="col-sm-9">@Model.Equipa?.Nome</dd>
+
+                    <dt class="col-sm-3">Data de Início:</dt>
+                    <dd class="col-sm-9">@Model.DataInicio.ToString("dd/MM/yyyy")</dd>
+
+                    <dt class="col-sm-3">Data de Fim:</dt>
+                    <dd class="col-sm-9">@Model.DataFim.ToString("dd/MM/yyyy")</dd>
+
+                    <dt class="col-sm-3">Salário:</dt>
+                    <dd class="col-sm-9">@(Model.Salario?.ToString("C") ?? "-")</dd>
+
+                    <dt class="col-sm-3">Cláusulas:</dt>
+                    <dd class="col-sm-9">@(Model.Clausulas ?? "-")</dd>
+
+                    <dt class="col-sm-3">Data de Criação:</dt>
+                    <dd class="col-sm-9">@Model.DataCriacao.ToString("dd/MM/yyyy HH:mm")</dd>
+                </dl>
+
+                <form asp-action="Delete" method="post" class="mt-4">
+                    <input type="hidden" asp-for="Id" />
+                    <button type="submit" class="btn btn-danger">
+                        <i class="fas fa-trash me-2"></i>Eliminar
+                    </button>
+                    <a asp-action="Index" class="btn btn-secondary">
+                        <i class="fas fa-arrow-left me-2"></i>Cancelar
+                    </a>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+

@@ -1,0 +1,68 @@
+@model Contratos2.Models.Entities.Equipa
+@{
+    ViewData["Title"] = "Eliminar Equipa";
+}
+
+<h2 class="text-danger"><i class="fas fa-exclamation-triangle me-2"></i>@ViewData["Title"]</h2>
+<hr />
+
+<div class="alert alert-warning">
+    <strong>Atenção!</strong> Tem a certeza que deseja eliminar esta equipa? Esta ação não pode ser desfeita.
+</div>
+
+<div class="row">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header bg-danger text-white">
+                <h4>Informações da Equipa</h4>
+            </div>
+            <div class="card-body">
+                <dl class="row">
+                    <dt class="col-sm-3">Nome:</dt>
+                    <dd class="col-sm-9">@Model.Nome</dd>
+
+                    <dt class="col-sm-3">Localidade:</dt>
+                    <dd class="col-sm-9">@(Model.Localidade ?? "-")</dd>
+
+                    <dt class="col-sm-3">Estádio:</dt>
+                    <dd class="col-sm-9">@(Model.Estadio ?? "-")</dd>
+
+                    <dt class="col-sm-3">Data de Fundação:</dt>
+                    <dd class="col-sm-9">@Model.DataFundacao.ToString("dd/MM/yyyy")</dd>
+
+                    @if (Model.Contratos != null && Model.Contratos.Any())
+                    {
+                        <dt class="col-sm-3">Contratos:</dt>
+                        <dd class="col-sm-9">
+                            <span class="badge bg-warning">@Model.Contratos.Count() contrato(s) associado(s)</span>
+                            <br />
+                            <small class="text-danger">Não é possível eliminar esta equipa porque possui contratos associados.</small>
+                        </dd>
+                    }
+                </dl>
+
+                @if (Model.Contratos == null || !Model.Contratos.Any())
+                {
+                    <form asp-action="Delete" method="post" class="mt-4">
+                        <input type="hidden" asp-for="Id" />
+                        <button type="submit" class="btn btn-danger">
+                            <i class="fas fa-trash me-2"></i>Eliminar
+                        </button>
+                        <a asp-action="Index" class="btn btn-secondary">
+                            <i class="fas fa-arrow-left me-2"></i>Cancelar
+                        </a>
+                    </form>
+                }
+                else
+                {
+                    <div class="mt-4">
+                        <a asp-action="Index" class="btn btn-secondary">
+                            <i class="fas fa-arrow-left me-2"></i>Voltar
+                        </a>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
