@@ -71,16 +71,29 @@ app.MapControllerRoute(
     pattern: "{controller=Home}/{action=Index}/{id?}");
 app.MapRazorPages();
 
-// Inicializar roles, usuário admin e dados de exemplo
+// Aplicar migrations automaticamente e inicializar dados
 using (var scope = app.Services.CreateScope())
 {
     var services = scope.ServiceProvider;
-    await Contratos2.Services.RoleInitializer.InitializeAsync(services);
-    
-    var context = services.GetRequiredService<ApplicationDbContext>();
-    var userManager = services.GetRequiredService<UserManager<ApplicationUser>>();
-    var roleManager = services.GetRequiredService<RoleManager<IdentityRole>>();
-    await DbInitializer.InitializeAsync(context, userManager, roleManager);
+    try
+    {
+        var context = services.GetRequiredService<ApplicationDbContext>();
+        // Aplicar migrations automaticamente
+        await context.Database.MigrateAsync();
+        
+        // Inicializar roles e usuário admin
+        await Contratos2.Services.RoleInitializer.InitializeAsync(services);
+        
+        // Inicializar dados de exemplo (apenas se não existirem)
+        var userManager = services.GetRequiredService<UserManager<ApplicationUser>>();
+        var roleManager = services.GetRequiredService<RoleManager<IdentityRole>>();
+        await DbInitializer.InitializeAsync(context, userManager, roleManager);
+    }
+    catch (Exception ex)
+    {
+        var logger = services.GetRequiredService<ILogger<Program>>();
+        logger.LogError(ex, "Erro ao aplicar migrations ou inicializar dados");
+    }
 }
 
 app.Run();
