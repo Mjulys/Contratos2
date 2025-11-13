@@ -1,0 +1,75 @@
+﻿@{
+    ViewData["Title"] = "Página Inicial";
+}
+
+<div class="row mb-5">
+    <div class="col-12 text-center">
+        <h2 style="color: var(--primary-color);">Bem-vindo ao Sistema de Gestão</h2>
+        <p class="lead" style="color: var(--dark-color);">Gerencie jogadores, equipas e contratos de forma profissional</p>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-4 mb-4">
+        <div class="card text-center h-100">
+            <div class="card-body">
+                <div class="mb-3" style="font-size: 4rem; color: var(--primary-color);">
+                    <i class="fas fa-users"></i>
+                </div>
+                <h5 class="card-title" style="color: var(--primary-color);">Jogadores</h5>
+                <p class="card-text">Cadastre e gerencie todos os dados dos jogadores de forma organizada e eficiente.</p>
+                <a asp-controller="Jogadores" asp-action="Index" class="btn btn-primary">
+                    <i class="fas fa-arrow-right me-2"></i>Gerir Jogadores
+                </a>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4 mb-4">
+        <div class="card text-center h-100">
+            <div class="card-body">
+                <div class="mb-3" style="font-size: 4rem; color: var(--primary-color);">
+                    <i class="fas fa-shield-alt"></i>
+                </div>
+                <h5 class="card-title" style="color: var(--primary-color);">Equipas</h5>
+                <p class="card-text">Controle as informações das equipas desportivas e sua estrutura organizacional.</p>
+                <a asp-controller="Equipas" asp-action="Index" class="btn btn-primary">
+                    <i class="fas fa-arrow-right me-2"></i>Gerir Equipas
+                </a>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4 mb-4">
+        <div class="card text-center h-100">
+            <div class="card-body">
+                <div class="mb-3" style="font-size: 4rem; color: var(--primary-color);">
+                    <i class="fas fa-file-contract"></i>
+                </div>
+                <h5 class="card-title" style="color: var(--primary-color);">Contratos</h5>
+                <p class="card-text">Administre os contratos entre jogadores e equipas com total controle e transparência.</p>
+                <a asp-controller="Contratos" asp-action="Index" class="btn btn-primary">
+                    <i class="fas fa-arrow-right me-2"></i>Gerir Contratos
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+@if (!User.Identity.IsAuthenticated)
+{
+    <div class="row mt-5">
+        <div class="col-12 text-center">
+            <div class="card">
+                <div class="card-body py-5">
+                    <h3 style="color: var(--primary-color);">Ready to Get Started?</h3>
+                    <p class="mb-4">Junte-se a nós e transforme a gestão do seu clube</p>
+                    <a class="btn btn-warning btn-lg me-3" asp-area="Identity" asp-page="/Account/Register">
+                        <i class="fas fa-user-plus me-2"></i>Criar Conta
+                    </a>
+                    <a class="btn btn-outline-primary btn-lg" asp-area="Identity" asp-page="/Account/Login">
+                        <i class="fas fa-sign-in-alt me-2"></i>Fazer Login
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+}
