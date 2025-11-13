@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using Microsoft.AspNetCore.Identity;
 
 namespace Contratos2.Models.Entities
 {
@@ -9,11 +10,11 @@ namespace Contratos2.Models.Entities
 
         [Required]
         [StringLength(100)]
-        public string Nome { get; set; }
+        public string Nome { get; set; } = string.Empty;
 
         [Required]
         [StringLength(100)]
-        public string Email { get; set; }
+        public string Email { get; set; } = string.Empty;
 
         [DataType(DataType.Date)]
         public DateTime DataNascimento { get; set; }

@@ -4,60 +4,128 @@
     ViewData["Title"] = "Contratos";
 }
 
-<div class="card">
-    <div class="card-header d-flex justify-content-between align-items-center">
-        <h3 class="mb-0"><i class="fas fa-file-contract me-2"></i>Lista de Contratos</h3>
-        @if (User.IsInRole("Admin") || User.IsInRole("Funcionario"))
-        {
-            <a asp-action="Create" class="btn btn-warning">
-                <i class="fas fa-plus me-2"></i>Novo Contrato
-            </a>
-        }
-    </div>
-    <div class="card-body">
-        <div class="table-responsive">
-            <table class="table table-hover">
-                <thead>
-                    <tr>
-                        <th>Jogador</th>
-                        <th>Equipa</th>
-                        <th>Data Início</th>
-                        <th>Data Fim</th>
-                        <th>Salário</th>
-                        <th>Ações</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach (var item in Model)
-                    {
-                        <tr>
-                            <td>@item.Jogador?.Nome</td>
-                            <td>@item.Equipa?.Nome</td>
-                            <td>@item.DataInicio.ToString("dd/MM/yyyy")</td>
-                            <td>@item.DataFim.ToString("dd/MM/yyyy")</td>
-                            <td>@(item.Salario?.ToString("C") ?? "-")</td>
-                            <td>
-                                <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-sm btn-info">
-                                    <i class="fas fa-eye"></i>
-                                </a>
-                                @if (User.IsInRole("Admin") || User.IsInRole("Funcionario"))
-                                {
-                                    <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-sm btn-warning">
-                                        <i class="fas fa-edit"></i>
-                                    </a>
-                                }
-                                @if (User.IsInRole("Admin"))
-                                {
-                                    <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-sm btn-danger">
-                                        <i class="fas fa-trash"></i>
-                                    </a>
-                                }
-                            </td>
-                        </tr>
-                    }
-                </tbody>
-            </table>
-        </div>
-    </div>
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2><i class="fas fa-file-contract me-2"></i>@ViewData["Title"]</h2>
+    @if (User.IsInRole("Admin") || User.IsInRole("Funcionario"))
+    {
+        <a asp-action="Create" class="btn btn-primary">
+            <i class="fas fa-plus me-2"></i>Novo Contrato
+        </a>
+    }
 </div>
 
+@if (TempData["SuccessMessage"] != null)
+{
+    <div class="alert alert-success alert-dismissible fade show" role="alert">
+        @TempData["SuccessMessage"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+}
+
+@if (TempData["ErrorMessage"] != null)
+{
+    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+        @TempData["ErrorMessage"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+}
+
+@if (User.Identity?.IsAuthenticated == true && (User.IsInRole("Admin") || User.IsInRole("Funcionario")))
+{
+    <div class="card mb-3">
+        <div class="card-body">
+            <div class="btn-group" role="group">
+                <a asp-action="Index" asp-route-filtro="" class="btn btn-outline-primary @(ViewBag.Filtro == null ? "active" : "")">
+                    Todos
+                </a>
+                <a asp-action="Index" asp-route-filtro="ativos" class="btn btn-outline-success @(ViewBag.Filtro == "ativos" ? "active" : "")">
+                    Ativos
+                </a>
+                <a asp-action="Index" asp-route-filtro="passados" class="btn btn-outline-secondary @(ViewBag.Filtro == "passados" ? "active" : "")">
+                    Passados
+                </a>
+                <a asp-action="Index" asp-route-filtro="futuros" class="btn btn-outline-info @(ViewBag.Filtro == "futuros" ? "active" : "")">
+                    Futuros
+                </a>
+            </div>
+        </div>
+    </div>
+}
+
+<div class="card">
+    <div class="card-body">
+        @if (!Model.Any())
+        {
+            <div class="alert alert-info text-center">
+                <i class="fas fa-info-circle me-2"></i>Nenhum contrato encontrado.
+            </div>
+        }
+        else
+        {
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>Jogador</th>
+                            <th>Equipa</th>
+                            <th>Data Início</th>
+                            <th>Data Fim</th>
+                            <th>Status</th>
+                            <th>Salário</th>
+                            <th>Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model)
+                        {
+                            var hoje = DateTime.Today;
+                            var status = "";
+                            var badgeClass = "";
+                            if (item.DataInicio > hoje)
+                            {
+                                status = "Futuro";
+                                badgeClass = "bg-info";
+                            }
+                            else if (item.DataFim < hoje)
+                            {
+                                status = "Passado";
+                                badgeClass = "bg-secondary";
+                            }
+                            else
+                            {
+                                status = "Ativo";
+                                badgeClass = "bg-success";
+                            }
+
+                            <tr>
+                                <td>@item.Jogador?.Nome</td>
+                                <td>@item.Equipa?.Nome</td>
+                                <td>@item.DataInicio.ToString("dd/MM/yyyy")</td>
+                                <td>@item.DataFim.ToString("dd/MM/yyyy")</td>
+                                <td><span class="badge @badgeClass">@status</span></td>
+                                <td>@(item.Salario?.ToString("C") ?? "-")</td>
+                                <td>
+                                    <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-sm btn-info" title="Detalhes">
+                                        <i class="fas fa-eye"></i>
+                                    </a>
+                                    @if (User.IsInRole("Admin") || User.IsInRole("Funcionario"))
+                                    {
+                                        <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-sm btn-warning" title="Editar">
+                                            <i class="fas fa-edit"></i>
+                                        </a>
+                                    }
+                                    @if (User.IsInRole("Admin"))
+                                    {
+                                        <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-sm btn-danger" title="Eliminar">
+                                            <i class="fas fa-trash"></i>
+                                        </a>
+                                    }
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        }
+    </div>
+</div>

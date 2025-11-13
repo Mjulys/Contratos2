@@ -1,0 +1,59 @@
+@model Contratos2.Models.Entities.ApplicationUser
+@{
+    ViewData["Title"] = "Editar Perfil";
+}
+
+<h2><i class="fas fa-user-edit me-2"></i>@ViewData["Title"]</h2>
+<hr />
+
+<div class="row">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-body">
+                <form asp-action="Edit" method="post" enctype="multipart/form-data">
+                    <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+                    <input type="hidden" asp-for="Id" />
+                    
+                    <div class="mb-3">
+                        <label asp-for="NomeCompleto" class="form-label"></label>
+                        <input asp-for="NomeCompleto" class="form-control" />
+                        <span asp-validation-for="NomeCompleto" class="text-danger"></span>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="Email" class="form-label"></label>
+                        <input asp-for="Email" class="form-control" type="email" readonly />
+                        <small class="form-text text-muted">O email não pode ser alterado.</small>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Foto de Perfil</label>
+                        @if (!string.IsNullOrEmpty(Model.FotoPerfil))
+                        {
+                            <div class="mb-2">
+                                <img src="@Model.FotoPerfil" alt="Foto atual" class="img-thumbnail" style="max-width: 150px; max-height: 150px;" />
+                            </div>
+                        }
+                        <input type="file" name="fotoFile" class="form-control" accept="image/*" />
+                        <small class="form-text text-muted">Formatos aceites: JPG, PNG, GIF. Tamanho máximo: 5MB</small>
+                        <input type="hidden" asp-for="FotoPerfil" />
+                    </div>
+
+                    <div class="mb-3">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-save me-2"></i>Guardar
+                        </button>
+                        <a asp-action="Index" class="btn btn-secondary">
+                            <i class="fas fa-arrow-left me-2"></i>Cancelar
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}
+

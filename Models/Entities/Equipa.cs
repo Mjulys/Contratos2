@@ -9,7 +9,7 @@ namespace Contratos2.Models.Entities
 
         [Required]
         [StringLength(100)]
-        public string Nome { get; set; }
+        public string Nome { get; set; } = string.Empty;
 
         [StringLength(100)]
         public string? Localidade { get; set; }

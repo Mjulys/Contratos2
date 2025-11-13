@@ -34,6 +34,12 @@ builder.Services.AddDefaultIdentity<ApplicationUser>(options =>
 // Email sender (para desenvolvimento)
 builder.Services.AddTransient<Contratos2.Services.IEmailSender, Contratos2.Services.EmailSender>();
 
+// Repository Pattern
+builder.Services.AddScoped(typeof(Contratos2.Repository.IRepository<>), typeof(Contratos2.Repository.Repository<>));
+builder.Services.AddScoped<Contratos2.Repository.IJogadorRepository, Contratos2.Repository.JogadorRepository>();
+builder.Services.AddScoped<Contratos2.Repository.IEquipaRepository, Contratos2.Repository.EquipaRepository>();
+builder.Services.AddScoped<Contratos2.Repository.IContratoRepository, Contratos2.Repository.ContratoRepository>();
+
 builder.Services.AddControllersWithViews();
 
 var app = builder.Build();
@@ -48,6 +54,9 @@ else
     app.UseExceptionHandler("/Home/Error");
     app.UseHsts();
 }
+
+// Tratamento de erros HTTP
+app.UseStatusCodePagesWithReExecute("/Home/Error", "?statusCode={0}");
 
 app.UseHttpsRedirection();
 app.UseStaticFiles();

@@ -1,0 +1,69 @@
+@model Contratos2.Models.Entities.ApplicationUser
+@{
+    ViewData["Title"] = "Editar Utilizador";
+}
+
+<h2><i class="fas fa-edit me-2"></i>@ViewData["Title"]</h2>
+<hr />
+
+<div class="row">
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-body">
+                <form asp-action="Edit">
+                    <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+                    <input type="hidden" asp-for="Id" />
+                    
+                    <div class="mb-3">
+                        <label asp-for="NomeCompleto" class="form-label"></label>
+                        <input asp-for="NomeCompleto" class="form-control" />
+                        <span asp-validation-for="NomeCompleto" class="text-danger"></span>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="Email" class="form-label"></label>
+                        <input asp-for="Email" class="form-control" type="email" readonly />
+                        <small class="form-text text-muted">O email não pode ser alterado.</small>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="TipoUtilizador" class="form-label"></label>
+                        <select asp-for="TipoUtilizador" class="form-select">
+                            <option value="Funcionario">Funcionário</option>
+                            <option value="Jogador">Jogador</option>
+                        </select>
+                        <span asp-validation-for="TipoUtilizador" class="text-danger"></span>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="FotoPerfil" class="form-label"></label>
+                        <input asp-for="FotoPerfil" class="form-control" />
+                        <span asp-validation-for="FotoPerfil" class="text-danger"></span>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Role</label>
+                        <select name="role" class="form-select" required>
+                            <option value="Funcionario" selected="@(ViewBag.CurrentRole == "Funcionario")">Funcionário</option>
+                            <option value="Jogador" selected="@(ViewBag.CurrentRole == "Jogador")">Jogador</option>
+                        </select>
+                    </div>
+
+                    <div class="mb-3">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-save me-2"></i>Guardar
+                        </button>
+                        <a asp-action="Index" class="btn btn-secondary">
+                            <i class="fas fa-arrow-left me-2"></i>Voltar
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}
+

@@ -9,11 +9,11 @@ namespace Contratos2.Models.Entities
 
         [Required]
         public int JogadorId { get; set; }
-        public Jogador Jogador { get; set; }
+        public Jogador Jogador { get; set; } = null!;
 
         [Required]
         public int EquipaId { get; set; }
-        public Equipa Equipa { get; set; }
+        public Equipa Equipa { get; set; } = null!;
 
         [Required]
         [DataType(DataType.Date)]

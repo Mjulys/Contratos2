@@ -1,0 +1,62 @@
+@model Contratos2.Models.Entities.ApplicationUser
+@{
+    ViewData["Title"] = "Detalhes do Utilizador";
+}
+
+<h2><i class="fas fa-user me-2"></i>@ViewData["Title"]</h2>
+<hr />
+
+<div class="row">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header">
+                <h4>Informações do Utilizador</h4>
+            </div>
+            <div class="card-body">
+                <dl class="row">
+                    <dt class="col-sm-3">Nome Completo:</dt>
+                    <dd class="col-sm-9">@Model.NomeCompleto</dd>
+
+                    <dt class="col-sm-3">Email:</dt>
+                    <dd class="col-sm-9">@Model.Email</dd>
+
+                    <dt class="col-sm-3">Tipo:</dt>
+                    <dd class="col-sm-9">@Model.TipoUtilizador</dd>
+
+                    <dt class="col-sm-3">Role:</dt>
+                    <dd class="col-sm-9">
+                        @if (ViewBag.Roles != null)
+                        {
+                            @string.Join(", ", (IList<string>)ViewBag.Roles)
+                        }
+                    </dd>
+
+                    <dt class="col-sm-3">Email Confirmado:</dt>
+                    <dd class="col-sm-9">
+                        @if (Model.EmailConfirmed)
+                        {
+                            <span class="badge bg-success">Sim</span>
+                        }
+                        else
+                        {
+                            <span class="badge bg-warning">Não</span>
+                        }
+                    </dd>
+
+                    <dt class="col-sm-3">Data Registo:</dt>
+                    <dd class="col-sm-9">@Model.DataRegisto.ToString("dd/MM/yyyy HH:mm")</dd>
+                </dl>
+
+                <div class="mt-4">
+                    <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-warning">
+                        <i class="fas fa-edit me-2"></i>Editar
+                    </a>
+                    <a asp-action="Index" class="btn btn-secondary">
+                        <i class="fas fa-arrow-left me-2"></i>Voltar
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+

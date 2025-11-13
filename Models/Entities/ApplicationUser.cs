@@ -7,7 +7,7 @@ namespace Contratos2.Models.Entities
     {
         [Required]
         [StringLength(100)]
-        public string NomeCompleto { get; set; }
+        public string NomeCompleto { get; set; } = string.Empty;
 
         public string? FotoPerfil { get; set; }
 

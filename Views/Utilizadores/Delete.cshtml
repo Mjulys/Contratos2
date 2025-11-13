@@ -1,0 +1,52 @@
+@model Contratos2.Models.Entities.ApplicationUser
+@{
+    ViewData["Title"] = "Eliminar Utilizador";
+}
+
+<h2 class="text-danger"><i class="fas fa-exclamation-triangle me-2"></i>@ViewData["Title"]</h2>
+<hr />
+
+<div class="alert alert-warning">
+    <strong>Atenção!</strong> Tem a certeza que deseja eliminar este utilizador?
+</div>
+
+<div class="row">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header bg-danger text-white">
+                <h4>Informações do Utilizador</h4>
+            </div>
+            <div class="card-body">
+                <dl class="row">
+                    <dt class="col-sm-3">Nome Completo:</dt>
+                    <dd class="col-sm-9">@Model.NomeCompleto</dd>
+
+                    <dt class="col-sm-3">Email:</dt>
+                    <dd class="col-sm-9">@Model.Email</dd>
+
+                    <dt class="col-sm-3">Tipo:</dt>
+                    <dd class="col-sm-9">@Model.TipoUtilizador</dd>
+
+                    <dt class="col-sm-3">Role:</dt>
+                    <dd class="col-sm-9">
+                        @if (ViewBag.Roles != null)
+                        {
+                            @string.Join(", ", (IList<string>)ViewBag.Roles)
+                        }
+                    </dd>
+                </dl>
+
+                <form asp-action="Delete" method="post" class="mt-4">
+                    <input type="hidden" asp-for="Id" />
+                    <button type="submit" class="btn btn-danger">
+                        <i class="fas fa-trash me-2"></i>Eliminar
+                    </button>
+                    <a asp-action="Index" class="btn btn-secondary">
+                        <i class="fas fa-arrow-left me-2"></i>Cancelar
+                    </a>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+

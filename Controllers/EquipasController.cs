@@ -1,27 +1,39 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
-using Contratos2.Data;
 using Contratos2.Models.Entities;
+using Contratos2.Repository;
+using Microsoft.Extensions.Logging;
 
 namespace Contratos2.Controllers
 {
     [Authorize]
     public class EquipasController : Controller
     {
-        private readonly ApplicationDbContext _context;
+        private readonly IEquipaRepository _equipaRepository;
+        private readonly ILogger<EquipasController> _logger;
 
-        public EquipasController(ApplicationDbContext context)
+        public EquipasController(IEquipaRepository equipaRepository, ILogger<EquipasController> logger)
         {
-            _context = context;
+            _equipaRepository = equipaRepository;
+            _logger = logger;
         }
 
         // GET: Equipas
         [AllowAnonymous]
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Equipas.ToListAsync());
+            try
+            {
+                var equipas = await _equipaRepository.GetAllAsync();
+                return View(equipas);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Erro ao listar equipas");
+                TempData["ErrorMessage"] = "Ocorreu um erro ao carregar as equipas.";
+                return RedirectToAction("Index", "Home");
+            }
         }
 
         // GET: Equipas/Details/5
@@ -30,20 +42,25 @@ namespace Contratos2.Controllers
         {
             if (id == null)
             {
-                return NotFound();
+                return RedirectToAction("NotFound", "Home");
             }
 
-            var equipa = await _context.Equipas
-                .Include(e => e.Contratos)
-                    .ThenInclude(c => c.Jogador)
-                .FirstOrDefaultAsync(m => m.Id == id);
-
-            if (equipa == null)
+            try
             {
-                return NotFound();
-            }
+                var equipa = await _equipaRepository.GetByIdWithContratosAsync(id.Value);
+                if (equipa == null)
+                {
+                    return RedirectToAction("NotFound", "Home");
+                }
 
-            return View(equipa);
+                return View(equipa);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Erro ao visualizar equipa {Id}", id);
+                TempData["ErrorMessage"] = "Ocorreu um erro ao carregar a equipa.";
+                return RedirectToAction(nameof(Index));
+            }
         }
 
         // GET: Equipas/Create
@@ -61,10 +78,21 @@ namespace Contratos2.Controllers
         {
             if (ModelState.IsValid)
             {
-                _context.Add(equipa);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                try
+                {
+                    await _equipaRepository.AddAsync(equipa);
+                    await _equipaRepository.SaveChangesAsync();
+
+                    TempData["SuccessMessage"] = "Equipa criada com sucesso.";
+                    return RedirectToAction(nameof(Index));
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogError(ex, "Erro ao criar equipa");
+                    ModelState.AddModelError(string.Empty, "Ocorreu um erro ao criar a equipa. Tente novamente.");
+                }
             }
+
             return View(equipa);
         }
 
@@ -74,15 +102,25 @@ namespace Contratos2.Controllers
         {
             if (id == null)
             {
-                return NotFound();
+                return RedirectToAction("NotFound", "Home");
             }
 
-            var equipa = await _context.Equipas.FindAsync(id);
-            if (equipa == null)
+            try
             {
-                return NotFound();
+                var equipa = await _equipaRepository.GetByIdAsync(id.Value);
+                if (equipa == null)
+                {
+                    return RedirectToAction("NotFound", "Home");
+                }
+
+                return View(equipa);
             }
-            return View(equipa);
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Erro ao carregar equipa para edição {Id}", id);
+                TempData["ErrorMessage"] = "Ocorreu um erro ao carregar a equipa.";
+                return RedirectToAction(nameof(Index));
+            }
         }
 
         // POST: Equipas/Edit/5
@@ -93,29 +131,37 @@ namespace Contratos2.Controllers
         {
             if (id != equipa.Id)
             {
-                return NotFound();
+                return RedirectToAction("NotFound", "Home");
             }
 
             if (ModelState.IsValid)
             {
                 try
                 {
-                    _context.Update(equipa);
-                    await _context.SaveChangesAsync();
+                    _equipaRepository.Update(equipa);
+                    await _equipaRepository.SaveChangesAsync();
+
+                    TempData["SuccessMessage"] = "Equipa atualizada com sucesso.";
+                    return RedirectToAction(nameof(Index));
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!EquipaExists(equipa.Id))
+                    if (!await _equipaRepository.ExistsAsync(e => e.Id == equipa.Id))
                     {
-                        return NotFound();
+                        return RedirectToAction("NotFound", "Home");
                     }
                     else
                     {
-                        throw;
+                        ModelState.AddModelError(string.Empty, "A equipa foi modificada por outro utilizador. Recarregue a página e tente novamente.");
                     }
                 }
-                return RedirectToAction(nameof(Index));
+                catch (Exception ex)
+                {
+                    _logger.LogError(ex, "Erro ao atualizar equipa {Id}", id);
+                    ModelState.AddModelError(string.Empty, "Ocorreu um erro ao atualizar a equipa.");
+                }
             }
+
             return View(equipa);
         }
 
@@ -125,17 +171,32 @@ namespace Contratos2.Controllers
         {
             if (id == null)
             {
-                return NotFound();
+                return RedirectToAction("NotFound", "Home");
             }
 
-            var equipa = await _context.Equipas
-                .FirstOrDefaultAsync(m => m.Id == id);
-            if (equipa == null)
+            try
             {
-                return NotFound();
-            }
+                var equipa = await _equipaRepository.GetByIdWithContratosAsync(id.Value);
+                if (equipa == null)
+                {
+                    return RedirectToAction("NotFound", "Home");
+                }
 
-            return View(equipa);
+                // Verificar se tem contratos
+                if (equipa.Contratos != null && equipa.Contratos.Any())
+                {
+                    TempData["ErrorMessage"] = "Não é possível eliminar esta equipa porque possui contratos associados.";
+                    return RedirectToAction(nameof(Index));
+                }
+
+                return View(equipa);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Erro ao carregar equipa para eliminação {Id}", id);
+                TempData["ErrorMessage"] = "Ocorreu um erro ao carregar a equipa.";
+                return RedirectToAction(nameof(Index));
+            }
         }
 
         // POST: Equipas/Delete/5
@@ -144,19 +205,40 @@ namespace Contratos2.Controllers
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var equipa = await _context.Equipas.FindAsync(id);
-            if (equipa != null)
+            try
             {
-                _context.Equipas.Remove(equipa);
+                var equipa = await _equipaRepository.GetByIdAsync(id);
+                if (equipa != null)
+                {
+                    // Verificar se tem contratos
+                    var equipaComContratos = await _equipaRepository.GetByIdWithContratosAsync(id);
+                    if (equipaComContratos != null && equipaComContratos.Contratos != null && equipaComContratos.Contratos.Any())
+                    {
+                        TempData["ErrorMessage"] = "Não é possível eliminar esta equipa porque possui contratos associados.";
+                        return RedirectToAction(nameof(Index));
+                    }
+
+                    _equipaRepository.Remove(equipa);
+                    await _equipaRepository.SaveChangesAsync();
+                    TempData["SuccessMessage"] = "Equipa eliminada com sucesso.";
+                }
+                else
+                {
+                    TempData["ErrorMessage"] = "Equipa não encontrada.";
+                }
+            }
+            catch (DbUpdateException ex)
+            {
+                _logger.LogError(ex, "Erro ao eliminar equipa {Id} - possível conflito de foreign key", id);
+                TempData["ErrorMessage"] = "Não é possível eliminar esta equipa porque está associada a outros registos.";
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Erro ao eliminar equipa {Id}", id);
+                TempData["ErrorMessage"] = "Ocorreu um erro ao eliminar a equipa.";
             }
 
-            await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
-        }
-
-        private bool EquipaExists(int id)
-        {
-            return _context.Equipas.Any(e => e.Id == id);
         }
     }
 }
